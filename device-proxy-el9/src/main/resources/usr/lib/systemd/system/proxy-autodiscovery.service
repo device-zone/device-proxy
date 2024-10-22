@@ -1,0 +1,14 @@
+# systemd service for managing all proxy autoconfiguration.
+
+[Unit]
+Description=Proxy Configuration Autodiscovery
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/device-autodiscovery/proxy start
+ExecReload=/bin/bash /usr/libexec/device-autodiscovery/proxy reload
+RemainAfterExit=on
+
+[Install]
+WantedBy=multi-user.target
+

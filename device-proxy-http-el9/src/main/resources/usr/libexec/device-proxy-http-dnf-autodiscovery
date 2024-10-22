@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#
+# Proxy Autodiscovery - HTTP
+# ==========================
+#
+# This script autogenerates the http proxy config for dnf.
+
+set -e
+umask 0007
+
+
+#
+# Build http proxy options
+# ------------------------
+
+line="/etc/device/system/proxy/http"
+
+proxyname=""
+port=""
+
+if test ! -f "$line/name.txt"; then
+  proxyname=""
+else
+  proxyname=$(head -n 1 "$line/name.txt")
+fi
+
+if test ! -f "$line/port.txt"; then
+  port=3128
+else
+  port=$(head -n 1 "$line/port.txt")
+fi
+
+
+logger -t proxy-http-autodiscovery "proxy: http://${proxyname}:${port}"
+
+
+#
+# Configure dnf
+# -------------
+#
+# Add the proxy option to dnf.
+
+if test -n "${proxyname}"; then
+
+  augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+set /files/etc/dnf/dnf.conf/main/proxy http://${proxyname}:${port}
+save
+EOF
+
+else
+
+  augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/dnf/dnf.conf/main/proxy
+save
+EOF
+
+fi
+
+
