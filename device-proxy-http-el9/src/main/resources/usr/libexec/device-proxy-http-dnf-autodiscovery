@@ -10,11 +10,25 @@ set -e
 umask 0007
 
 
+line="/etc/device/system/proxy/http"
+
+if test -f "$line/disabled.bin"; then
+
+  logger -t proxy-http-autodiscovery "proxy: disabling..."
+
+  augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/dnf/dnf.conf/main/proxy
+save
+EOF
+
+  logger -t proxy-http-autodiscovery "proxy: disabled."
+
+  exit
+fi
+
 #
 # Build http proxy options
 # ------------------------
-
-line="/etc/device/system/proxy/http"
 
 proxyname=""
 port=""
@@ -43,17 +57,25 @@ logger -t proxy-http-autodiscovery "proxy: http://${proxyname}:${port}"
 
 if test -n "${proxyname}"; then
 
+  logger -t proxy-http-autodiscovery "proxy: enabling..."
+
   augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
 set /files/etc/dnf/dnf.conf/main/proxy http://${proxyname}:${port}
 save
 EOF
 
+  logger -t proxy-http-autodiscovery "proxy: enabled."
+
 else
+
+  logger -t proxy-http-autodiscovery "proxy: disabling..."
 
   augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
 rm /files/etc/dnf/dnf.conf/main/proxy
 save
 EOF
+
+  logger -t proxy-http-autodiscovery "proxy: disabled."
 
 fi
 
