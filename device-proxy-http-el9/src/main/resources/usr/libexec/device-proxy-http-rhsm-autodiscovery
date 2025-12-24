@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#
+# Proxy Autodiscovery - HTTP
+# ==========================
+#
+# This script autogenerates the http proxy config for rhsm.
+
+set -e
+umask 0007
+
+
+line="/etc/device/system/proxy/http"
+
+if test -f "$line/disabled.bin" -a -f /etc/rhsm/rhsm.conf; then
+
+  logger -t proxy-http-autodiscovery "proxy: disabling rhsm..."
+
+  augtool --load-file=/etc/rhsm/rhsm.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_hostname]]
+rm /files/etc/rhsm/rhsm.conf/server/proxy_hostname
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_port]]
+rm /files/etc/rhsm/rhsm.conf/server/proxy_port
+save
+EOF
+
+  logger -t proxy-http-autodiscovery "proxy: rhsm disabled."
+
+  exit
+fi
+
+#
+# Build http proxy options
+# ------------------------
+
+proxyname=""
+port=""
+
+if test ! -f "$line/name.txt"; then
+  proxyname=""
+else
+  proxyname=$(head -n 1 "$line/name.txt")
+fi
+
+if test ! -f "$line/port.txt"; then
+  port=3128
+else
+  port=$(head -n 1 "$line/port.txt")
+fi
+
+
+logger -t proxy-http-autodiscovery "proxy: http://${proxyname}:${port}"
+
+
+#
+# Configure dnf
+# -------------
+#
+# Add the proxy option to dnf.
+
+if test -n "${proxyname}" -a -f /etc/rhsm/rhsm.conf; then
+
+  logger -t proxy-http-autodiscovery "proxy: enabling rhsm..."
+
+  augtool --load-file=/etc/rhsm/rhsm.conf <<-EOF | /usr/bin/logger -t "{0}"
+set /files/etc/rhsm/rhsm.conf/server/proxy_hostname ${proxyname}
+ins #comment before /files/etc/rhsm/rhsm.conf/server/proxy_hostname
+set /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_hostname]] "device system proxy http set name=${proxyname}"
+set /files/etc/rhsm/rhsm.conf/server/proxy_port ${port}
+ins #comment before /files/etc/rhsm/rhsm.conf/server/proxy_port
+set /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_port]] "device system proxy http set port=${port}"
+save
+errors
+EOF
+
+  logger -t proxy-http-autodiscovery "proxy: rhsm enabled."
+
+else
+
+  logger -t proxy-http-autodiscovery "proxy: disabling rhsm..."
+
+  augtool --load-file=/etc/rhsm/rhsm.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_hostname]]
+rm /files/etc/rhsm/rhsm.conf/server/proxy_hostname
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_port]]
+rm /files/etc/rhsm/rhsm.conf/server/proxy_port
+save
+EOF
+
+augtool -s "rm /files/etc/ssh/sshd_config/#comment[following-sibling::*[1][self::ForwardX11]]"
+
+  logger -t proxy-http-autodiscovery "proxy: rhsm disabled."
+
+fi
+
+

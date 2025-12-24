@@ -101,6 +101,10 @@
                   <location>target/classes/usr/libexec/device-proxy-http-dnf-autodiscovery</location>
                   <destination>http-dnf</destination>
                 </source>
+                <source>
+                  <location>target/classes/usr/libexec/device-proxy-http-rhsm-autodiscovery</location>
+                  <destination>http-rhsm</destination>
+                </source>
               </sources>
             </mapping> 
             <mapping>
