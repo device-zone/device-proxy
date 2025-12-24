@@ -17,6 +17,7 @@ if test -f "$line/disabled.bin"; then
   logger -t proxy-http-autodiscovery "proxy: disabling..."
 
   augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]]
 rm /files/etc/dnf/dnf.conf/main/proxy
 save
 EOF
@@ -61,6 +62,8 @@ if test -n "${proxyname}"; then
 
   augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
 set /files/etc/dnf/dnf.conf/main/proxy http://${proxyname}:${port}
+ins #comment before /files/etc/dnf/dnf.conf/main/proxy
+set /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]] "device system proxy http set name=${proxyname} port=${port}"
 save
 EOF
 
@@ -71,6 +74,7 @@ else
   logger -t proxy-http-autodiscovery "proxy: disabling..."
 
   augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+rm /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]]
 rm /files/etc/dnf/dnf.conf/main/proxy
 save
 EOF
