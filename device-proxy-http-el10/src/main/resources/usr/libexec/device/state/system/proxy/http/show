@@ -5,14 +5,13 @@ umask 0002
 
 OPTIONS="--show - --fqdn name --show-flags disabled --show-table name,port --flag X --polar disabled --port port"
 
-
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 fi
 

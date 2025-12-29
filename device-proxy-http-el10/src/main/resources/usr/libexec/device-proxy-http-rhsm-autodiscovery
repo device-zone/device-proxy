@@ -64,9 +64,11 @@ if test -n "${proxyname}" -a -f /etc/rhsm/rhsm.conf; then
 
   augtool --load-file=/etc/rhsm/rhsm.conf <<-EOF | /usr/bin/logger -t "{0}"
 set /files/etc/rhsm/rhsm.conf/server/proxy_hostname ${proxyname}
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_hostname]]
 ins #comment before /files/etc/rhsm/rhsm.conf/server/proxy_hostname
 set /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_hostname]] "device system proxy http set name=${proxyname}"
 set /files/etc/rhsm/rhsm.conf/server/proxy_port ${port}
+rm /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_port]]
 ins #comment before /files/etc/rhsm/rhsm.conf/server/proxy_port
 set /files/etc/rhsm/rhsm.conf/server/#comment[following-sibling::*[1][self::proxy_port]] "device system proxy http set port=${port}"
 save

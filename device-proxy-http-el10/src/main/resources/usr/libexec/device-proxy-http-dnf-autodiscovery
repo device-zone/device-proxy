@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # Proxy Autodiscovery - HTTP
@@ -12,7 +12,7 @@ umask 0007
 
 line="/etc/device/system/proxy/http"
 
-if test -f "$line/disabled.bin"; then
+if test -f "$line/disabled.polar"; then
 
   logger -t proxy-http-autodiscovery "proxy: disabling..."
 
@@ -56,20 +56,7 @@ logger -t proxy-http-autodiscovery "proxy: http://${proxyname}:${port}"
 #
 # Add the proxy option to dnf.
 
-if test -n "${proxyname}"; then
-
-  logger -t proxy-http-autodiscovery "proxy: enabling..."
-
-  augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
-set /files/etc/dnf/dnf.conf/main/proxy http://${proxyname}:${port}
-ins #comment before /files/etc/dnf/dnf.conf/main/proxy
-set /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]] "device system proxy http set name=${proxyname} port=${port}"
-save
-EOF
-
-  logger -t proxy-http-autodiscovery "proxy: enabled."
-
-else
+if test -f "$line/disabled.polar"; then
 
   logger -t proxy-http-autodiscovery "proxy: disabling..."
 
@@ -80,6 +67,20 @@ save
 EOF
 
   logger -t proxy-http-autodiscovery "proxy: disabled."
+
+elif test -n "${proxyname}"; then
+
+  logger -t proxy-http-autodiscovery "proxy: enabling..."
+
+  augtool --load-file=/etc/dnf/dnf.conf <<-EOF | /usr/bin/logger -t "{0}"
+set /files/etc/dnf/dnf.conf/main/proxy http://${proxyname}:${port}
+rm /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]]
+ins #comment before /files/etc/dnf/dnf.conf/main/proxy
+set /files/etc/dnf/dnf.conf/main/#comment[following-sibling::*[1][self::proxy]] "device system proxy http set name=${proxyname} port=${port}"
+save
+EOF
+
+  logger -t proxy-http-autodiscovery "proxy: enabled."
 
 fi
 

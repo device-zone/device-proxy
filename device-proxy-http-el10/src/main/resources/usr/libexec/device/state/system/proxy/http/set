@@ -7,13 +7,13 @@ OPTIONS="--fqdn name --polar disabled --port port"
 
 if [ "$1" == "--" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
   /usr/bin/sudo /usr/bin/systemctl try-reload-or-restart proxy-autodiscovery.service
 
 elif [ "$1" == "-c" ]; then
 
-  /usr/libexec/device-set ${OPTIONS} "$@"
+  /usr/libexec/device-tool ${OPTIONS} "$@"
 
 fi
 
