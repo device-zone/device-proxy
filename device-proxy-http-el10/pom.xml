@@ -91,10 +91,10 @@
           </defineStatements>
           <mappings>
             <mapping>
-              <directory>/usr/libexec/device-autodiscovery/proxy.d</directory>
+              <directory>/usr/libexec/device/autodiscovery/proxy.d</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
-              <username>root</username>       
+              <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
@@ -115,24 +115,24 @@
               <groupname>device</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/system/proxy/http</directory>
+              <directory>/usr/libexec/device/state/system/proxy/http</directory>
               <directoryIncluded>true</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
             </mapping>
             <mapping>
-              <directory>/usr/libexec/device/system/proxy/http</directory>
+              <directory>/usr/libexec/device/state/system/proxy/http</directory>
               <directoryIncluded>false</directoryIncluded>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <sources>
                 <source>
-                  <location>target/classes/usr/libexec/device/system/proxy/http/set</location>
+                  <location>target/classes/usr/libexec/device/state/system/proxy/http/set</location>
                 </source>
                 <source>
-                  <location>target/classes/usr/libexec/device/system/proxy/http/show</location>
+                  <location>target/classes/usr/libexec/device/state/system/proxy/http/show</location>
                 </source>
               </sources>
             </mapping>

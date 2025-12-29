@@ -5,8 +5,8 @@ Description=Proxy Configuration Autodiscovery
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /usr/libexec/device-autodiscovery/proxy start
-ExecReload=/bin/bash /usr/libexec/device-autodiscovery/proxy reload
+ExecStart=/usr/bin/sequence -l /etc/device/system/proxy/ -s daemon.info -b /usr/libexec device/autodiscovery/proxy.d start
+ExecReload=/usr/bin/sequence -l /etc/device/system/proxy/ -s daemon.info -b /usr/libexec device/autodiscovery/proxy.d reload
 RemainAfterExit=on
 
 [Install]
