@@ -5,7 +5,10 @@ This appliance does the following:
 
 - All parameters passed to the device commands are syntax checked and canonicalised,
   with bash completion.
-- Allows specification of an HTTP proxy to be used with services that require it..
+- Allows specification of an HTTP proxy to be used with services that require it.
+
+The HTTP proxy is applied to DNF and the Redhat Subscription Manager.
+
 
 ## before
 
